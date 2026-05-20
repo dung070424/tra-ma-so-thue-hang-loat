@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Tra MST - Giao Diện</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Tra Mã Số Thuế (Hàng Loạt)</h1>
+
+      <label>Nhập mã (ngăn cách bởi dấu xuống dòng hoặc dấu phẩy):</label>
+      <textarea
+        id="codes"
+        rows="8"
+        placeholder="0313168515-006,0100107192"
+      ></textarea>
+
+      <div class="actions">
+        <button id="run">Chạy</button>
+        <button id="load">Tải bảng</button>
+        <span id="job"></span>
+      </div>
+
+      <section>
+        <h2>Logs</h2>
+        <pre id="logs"></pre>
+      </section>
+      <section>
+        <h2>Kết quả (Bảng)</h2>
+        <div id="results"></div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

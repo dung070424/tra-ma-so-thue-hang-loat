@@ -5,7 +5,7 @@ const os = require("os");
 const crypto = require("crypto");
 const { spawn } = require("child_process");
 
-const WEB_DIR = path.join(__dirname, "web");
+const WEB_DIR = __dirname;
 
 const jobs = {}; // jobId -> { logs: [], proc, clients: [], done, startTime }
 

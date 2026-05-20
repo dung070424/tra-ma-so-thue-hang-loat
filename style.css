@@ -1,0 +1,79 @@
+body {
+  font-family:
+    Segoe UI,
+    Roboto,
+    Arial,
+    sans-serif;
+  background: #0f1720;
+  color: #e6eef6;
+  padding: 20px;
+}
+main {
+  max-width: 880px;
+  margin: 0 auto;
+  background: #0b1220;
+  padding: 20px;
+  border-radius: 8px;
+}
+h1 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+label {
+  display: block;
+  margin-bottom: 6px;
+}
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #26303a;
+  background: #07101a;
+  color: #e6eef6;
+}
+.actions {
+  margin-top: 10px;
+}
+button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 8px;
+}
+pre#logs {
+  height: 360px;
+  overflow: auto;
+  background: #02070a;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #22303a;
+  color: #cde3ff;
+}
+a {
+  color: #60a5fa;
+}
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+.result-table th,
+.result-table td {
+  border: 1px solid #21313b;
+  padding: 8px;
+  text-align: left;
+}
+.result-table thead th {
+  background: #081826;
+  color: #cfe9ff;
+}
+.result-table tbody tr:nth-child(odd) {
+  background: #07131a;
+}
+.result-table tbody tr:nth-child(even) {
+  background: #021018;
+}
