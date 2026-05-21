@@ -96,6 +96,13 @@ async function extractCompanyInfo(page, mst) {
     "Mã số thuế": mst,
     "Tên công ty": "Không tìm thấy",
     "Trạng thái hoạt động": "Không tồn tại / Lỗi tra cứu",
+    "Địa chỉ": "Không tìm thấy",
+    "Địa chỉ Thuế": "Không tìm thấy",
+    "Người đại diện": "Không tìm thấy",
+    "Điện thoại": "Không tìm thấy",
+    "Quản lý bởi": "Không tìm thấy",
+    "Loại hình DN": "Không tìm thấy",
+    "Ngành nghề chính": "Không tìm thấy",
   };
 
   const hasDetails = (await page.locator("table.table-taxinfo").count()) > 0;
@@ -130,7 +137,54 @@ async function extractCompanyInfo(page, mst) {
         label.includes("Tình trạng hoạt động")
       ) {
         companyInfo["Trạng thái hoạt động"] = value;
-        break;
+        continue;
+      }
+
+      if (label.includes("Địa chỉ") && !label.toLowerCase().includes("thuế")) {
+        companyInfo["Địa chỉ"] = value;
+        continue;
+      }
+
+      if (label.toLowerCase().includes("thuế")) {
+        companyInfo["Địa chỉ Thuế"] = value;
+        continue;
+      }
+
+      if (
+        label.includes("Người đại diện") ||
+        label.includes("Đại diện") ||
+        label.includes("Người đại diện pháp luật")
+      ) {
+        companyInfo["Người đại diện"] = value;
+        continue;
+      }
+
+      if (
+        label.includes("Điện thoại") ||
+        label.includes("Số điện thoại") ||
+        label.includes("Phone")
+      ) {
+        companyInfo["Điện thoại"] = value;
+        continue;
+      }
+
+      if (label.includes("Quản lý bởi") || label.includes("Quản lý bởi:")) {
+        companyInfo["Quản lý bởi"] = value;
+        continue;
+      }
+
+      if (
+        label.includes("Loại hình") ||
+        label.includes("Loại hình DN") ||
+        label.toLowerCase().includes("loại hình doanh nghiệp")
+      ) {
+        companyInfo["Loại hình DN"] = value;
+        continue;
+      }
+
+      if (label.includes("Ngành nghề chính") || label.includes("Ngành nghề")) {
+        companyInfo["Ngành nghề chính"] = value;
+        continue;
       }
     }
   }
@@ -394,6 +448,13 @@ async function main() {
       "Mã số thuế": mst,
       "Tên công ty": "Không tìm thấy",
       "Trạng thái hoạt động": "Không tồn tại / Lỗi tra cứu",
+      "Địa chỉ": "Không tìm thấy",
+      "Địa chỉ Thuế": "Không tìm thấy",
+      "Người đại diện": "Không tìm thấy",
+      "Điện thoại": "Không tìm thấy",
+      "Quản lý bởi": "Không tìm thấy",
+      "Loại hình DN": "Không tìm thấy",
+      "Ngành nghề chính": "Không tìm thấy",
     };
 
     try {
@@ -401,6 +462,20 @@ async function main() {
       companyInfo["Tên công ty"] = lookupResult["Tên công ty"];
       companyInfo["Trạng thái hoạt động"] =
         lookupResult["Trạng thái hoạt động"];
+      companyInfo["Địa chỉ"] =
+        lookupResult["Địa chỉ"] || companyInfo["Địa chỉ"];
+      companyInfo["Địa chỉ Thuế"] =
+        lookupResult["Địa chỉ Thuế"] || companyInfo["Địa chỉ Thuế"];
+      companyInfo["Người đại diện"] =
+        lookupResult["Người đại diện"] || companyInfo["Người đại diện"];
+      companyInfo["Điện thoại"] =
+        lookupResult["Điện thoại"] || companyInfo["Điện thoại"];
+      companyInfo["Quản lý bởi"] =
+        lookupResult["Quản lý bởi"] || companyInfo["Quản lý bởi"];
+      companyInfo["Loại hình DN"] =
+        lookupResult["Loại hình DN"] || companyInfo["Loại hình DN"];
+      companyInfo["Ngành nghề chính"] =
+        lookupResult["Ngành nghề chính"] || companyInfo["Ngành nghề chính"];
 
       const statusColor = companyInfo["Trạng thái hoạt động"].includes(
         "Đang hoạt động",
@@ -414,7 +489,28 @@ async function main() {
         `   - Tên công ty: ${colors.bright}${companyInfo["Tên công ty"]}${colors.reset}`,
       );
       console.log(
-        `   - Trạng thái:  ${statusColor}${colors.bright}${companyInfo["Trạng thái hoạt động"]}${colors.reset}\n`,
+        `   - Trạng thái:  ${statusColor}${colors.bright}${companyInfo["Trạng thái hoạt động"]}${colors.reset}`,
+      );
+      console.log(
+        `   - Địa chỉ: ${colors.bright}${companyInfo["Địa chỉ"]}${colors.reset}`,
+      );
+      console.log(
+        `   - Địa chỉ Thuế: ${colors.bright}${companyInfo["Địa chỉ Thuế"]}${colors.reset}`,
+      );
+      console.log(
+        `   - Người đại diện: ${colors.bright}${companyInfo["Người đại diện"]}${colors.reset}`,
+      );
+      console.log(
+        `   - Điện thoại: ${colors.bright}${companyInfo["Điện thoại"]}${colors.reset}`,
+      );
+      console.log(
+        `   - Quản lý bởi: ${colors.bright}${companyInfo["Quản lý bởi"]}${colors.reset}`,
+      );
+      console.log(
+        `   - Loại hình DN: ${colors.bright}${companyInfo["Loại hình DN"]}${colors.reset}`,
+      );
+      console.log(
+        `   - Ngành nghề chính: ${colors.bright}${companyInfo["Ngành nghề chính"]}${colors.reset}\n`,
       );
     } catch (err) {
       const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
@@ -442,6 +538,13 @@ async function main() {
     "Tên công ty",
     "Mã số thuế",
     "Trạng thái hoạt động",
+    "Địa chỉ",
+    "Địa chỉ Thuế",
+    "Người đại diện",
+    "Điện thoại",
+    "Quản lý bởi",
+    "Loại hình DN",
+    "Ngành nghề chính",
   ];
 
   let csvContent =
@@ -470,7 +573,7 @@ async function main() {
     ` - Kết quả lưu tại: ${colors.fg.green}${colors.bright}${outputPath}${colors.reset}`,
   );
   console.log(
-    `   (Các cột xuất: STT, Tên công ty, Mã số thuế, Trạng thái hoạt động).`,
+    `   (Các cột xuất: STT, Tên công ty, Mã số thuế, Trạng thái hoạt động, Địa chỉ, Địa chỉ Thuế, Người đại diện, Điện thoại).`,
   );
   console.log(
     `${colors.fg.cyan}${colors.bright}================================================================${colors.reset}\n`,
