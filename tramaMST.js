@@ -88,7 +88,7 @@ function cleanText(text) {
   return text.trim().replace(/\s+/g, " ");
 }
 
-const MST_LOOKUP_TIMEOUT = 10000;
+const MST_LOOKUP_TIMEOUT = 30000;
 
 async function extractCompanyInfo(page, mst) {
   const companyInfo = {
@@ -227,19 +227,22 @@ async function tryLookupTaxCode(context, mst) {
   try {
     await page.goto("https://masothue.com/", {
       waitUntil: "domcontentloaded",
-      timeout: 10000,
+      timeout: 20000,
     });
 
+    // Chờ ô tìm kiếm xuất hiện (tránh bị Cloudflare chặn trang chưa load xong)
     const searchBox = page.locator("input#search");
-    if ((await searchBox.count()) === 0) {
-      throw new Error("Không tìm thấy ô tìm kiếm trên trang masothue.com");
+    try {
+      await searchBox.waitFor({ state: "visible", timeout: 12000 });
+    } catch {
+      throw new Error("Không tìm thấy ô tìm kiếm trên trang masothue.com (trang chưa load hoặc bị chặn)");
     }
 
     await searchBox.fill(mst);
     await Promise.all([
       page.keyboard.press("Enter"),
       page
-        .waitForNavigation({ waitUntil: "domcontentloaded", timeout: 8000 })
+        .waitForNavigation({ waitUntil: "domcontentloaded", timeout: 15000 })
         .catch(() => {}),
     ]);
 
@@ -375,8 +378,7 @@ async function main() {
       console.log(
         `${colors.fg.red}[LỖI] Không nhận được thông tin đầu vào. Thoát chương trình.${colors.reset}`,
       );
-      // Giữ màn hình console mở để người dùng kịp đọc lỗi
-      await askQuestion(`\nNhấn Enter để đóng chương trình...`);
+      if (process.stdin.isTTY) await askQuestion(`\nNhấn Enter để đóng chương trình...`);
       return;
     }
 
@@ -407,7 +409,7 @@ async function main() {
     console.log(
       `${colors.fg.red}[LỖI] Không tìm thấy mã số thuế hợp lệ nào. Thoát chương trình.${colors.reset}`,
     );
-    await askQuestion(`\nNhấn Enter để đóng chương trình...`);
+    if (process.stdin.isTTY) await askQuestion(`\nNhấn Enter để đóng chương trình...`);
     return;
   }
 
@@ -579,8 +581,10 @@ async function main() {
     `${colors.fg.cyan}${colors.bright}================================================================${colors.reset}\n`,
   );
 
-  // Giữ console mở để người dùng xem file kết quả
-  await askQuestion(`Nhấn Enter để kết thúc chương trình...`);
+  // Giữ console mở nếu chạy trực tiếp (có TTY), bỏ qua khi chạy qua server
+  if (process.stdin.isTTY) {
+    await askQuestion(`Nhấn Enter để kết thúc chương trình...`);
+  }
 }
 
 main().catch((err) => {
